@@ -180,6 +180,7 @@ export async function initializeWiki(workspaceRoot: string) {
   const watcher = workspace.createFileSystemWatcher("**/**.md");
 
   watcher.onDidCreate(async (uri) => {
+    console.log("WL File Created: ", uri);
     const page = createPage(uri);
 
     await updatePageContents(page);
@@ -195,6 +196,7 @@ export async function initializeWiki(workspaceRoot: string) {
   });
 
   watcher.onDidDelete(async (uri) => {
+    console.log("WL File Deleted: ", uri);
     const page = getPage(uri);
     if (!page) return;
 
@@ -225,6 +227,7 @@ export async function initializeWiki(workspaceRoot: string) {
   });
 
   watcher.onDidChange(async (uri) => {
+    console.log("WL File Changed: ", uri);
     const page = getPage(uri);
     if (!page) return;
 

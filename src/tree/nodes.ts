@@ -1,4 +1,11 @@
-import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
+import {
+  MarkdownString,
+  ThemeColor,
+  ThemeIcon,
+  TreeItem,
+  TreeItemCollapsibleState,
+  Uri,
+} from "vscode";
 import { store, WikiDirectory, WikiPage, WikiPageBackLink } from "../store";
 
 export class WikiDirectoryNode extends TreeItem {
@@ -23,6 +30,7 @@ export class WikiPageNode extends TreeItem {
     this.iconPath = ThemeIcon.File;
     this.resourceUri = page.uri;
     this.contextValue = "wikilens.page";
+    this.tooltip = new MarkdownString(this.page.contents);
 
     this.command = {
       command: "vscode.open",
@@ -50,8 +58,12 @@ export class WikiBackLinkNode extends TreeItem {
       TreeItemCollapsibleState.None
     );
 
+    this.iconPath = new ThemeIcon(
+      "arrow-left",
+      new ThemeColor("charts.purple")
+    );
     this.description = backLink.linePreview;
-    this.tooltip = backLink.linePreview;
+    this.tooltip = new MarkdownString(backLink.linePreview);
 
     this.command = {
       command: "vscode.open",

@@ -1,6 +1,8 @@
 import { commands, ExtensionContext, Uri, window, workspace } from "vscode";
 import { config } from "./config";
 import { EXTENSION_NAME } from "./constants";
+import { store } from "./store";
+import { updateWiki } from "./store/actions";
 import { WikiDirectoryNode, WikiPageNode } from "./tree/nodes";
 import { getPageFilePath, stringToByteArray, withProgress } from "./utils";
 
@@ -84,6 +86,13 @@ export function registerCommands(context: ExtensionContext) {
         }
       }
     )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(`${EXTENSION_NAME}.refreshWiki`, async () => {
+      store.isLoading = true;
+      updateWiki();
+    })
   );
 
   context.subscriptions.push(

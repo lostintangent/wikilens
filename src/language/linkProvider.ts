@@ -33,23 +33,20 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
         document.positionAt(contentEnd)
       );
 
-      const treeItem = getPageFromLink(title);
-      const linkUri = treeItem ? treeItem.uri : undefined;
-
-      return new WikiDocumentLink(title, linkRange, linkUri);
+      return new WikiDocumentLink(title, linkRange);
     });
   }
 
   async resolveDocumentLink(link: WikiDocumentLink, token: CancellationToken) {
-    const treeItem = getPageFromLink(link.title);
-    link.target = treeItem.uri;
-
-    if (!treeItem) {
+    let page = getPageFromLink(link.title);
+    if (!page) {
       await withProgress("Creating page...", async () =>
         commands.executeCommand(`${EXTENSION_NAME}._createWikiPage`, link.title)
       );
+      page = getPageFromLink(link.title);
     }
 
+    link.target = page!.uri;
     return link;
   }
 }

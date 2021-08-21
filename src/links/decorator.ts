@@ -25,7 +25,7 @@ const decors: { [decorTypeName: string]: Range[] } = {};
 
 const regexToDecorationTypes: { [regexp: string]: string[] } = {
   ["(\\[\\[)([^\\[\\]]+?)(\\]\\])"]: ["gray", "lightBlue", "gray"],
-  ["(#)([^\\s]+)"]: ["gray", "lightBlue"],
+  ["(#)([^\\s#`,]+)"]: ["gray", "lightBlue"],
 };
 
 function getDecorations(document: TextDocument) {

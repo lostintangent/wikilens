@@ -1,10 +1,15 @@
 import { observable, runInAction } from "mobx";
 import { Location, Range, Uri, workspace } from "vscode";
-import { store, WikiDirectory, WikiItem, WikiPage } from ".";
-import { byteArrayToString, findLinks, getPageFromLink } from "../utils";
+import { store, treeStore, WikiDirectory, WikiItem, WikiPage } from ".";
+import {
+  areEqualUris,
+  byteArrayToString,
+  findLinks,
+  getPageFromLink,
+} from "../utils";
 
-async function getBackLinks(uri: Uri, contents: string) {
-  const documentLinks = [...findLinks(contents)];
+async function getBackLinks({ uri, contents }: WikiPage) {
+  const documentLinks = [...findLinks(contents!)];
   return Promise.all(
     documentLinks.map(async ({ title, contentStart, contentEnd }) => {
       const document = await workspace.openTextDocument(uri);
@@ -42,29 +47,32 @@ async function updatePageContents(page: WikiPage) {
 }
 
 async function updatePageBacklinks(page: WikiPage) {
-  const links = await getBackLinks(page.uri, page.contents!);
-  for (const link of links) {
-    const page = getPageFromLink(link.title);
-    if (page) {
-      if (page.backLinks) {
-        const linkMatch = page.backLinks.find(
-          (l) =>
-            l.location.uri.toString() === link.location.uri.toString() &&
-            l.location.range.isEqual(link.location.range)
-        );
+  const linkedPages = store.pages.filter(
+    (page) =>
+      page.backLinks &&
+      page.backLinks.some((link) => areEqualUris(link.location.uri, page.uri))
+  );
 
-        if (linkMatch) {
-          linkMatch.linePreview = link.linePreview;
-        } else {
-          page.backLinks.push(link);
+  const newLinks = await getBackLinks(page);
+
+  runInAction(() => {
+    for (const linkedPage of linkedPages) {
+      linkedPage.backLinks = linkedPage.backLinks!.filter(
+        (link) => !areEqualUris(link.location.uri, page.uri)
+      );
+    }
+
+    for (let link of newLinks) {
+      const page = getPageFromLink(link.title);
+      if (page) {
+        if (!page.backLinks) {
+          page.backLinks = [];
         }
-      } else {
-        page.backLinks = [link];
+
+        page.backLinks.push(link);
       }
     }
-  }
-
-  // TODO: Remove backlinks that were removed
+  });
 }
 
 async function addPageToDirectory(page: WikiPage, tree: WikiItem[]) {
@@ -95,50 +103,71 @@ async function addPageToDirectory(page: WikiPage, tree: WikiItem[]) {
   parent!.pages.push(page);
 }
 
-async function removePageFromDirectory(page: WikiPage, tree: WikiItem[]) {
-  const pathParts = page.path.split("/");
-  pathParts.splice(-1, 1);
+function getDirectory(path: string) {
+  const pathParts = path.split("/");
 
   let parent: WikiDirectory | undefined;
   for (let pathPart of pathParts) {
-    const items: WikiItem[] = parent ? parent.pages : tree;
+    const items: WikiItem[] = parent ? parent.pages : treeStore.tree!;
     parent = items.find(
       (item) => (item as WikiPage).uri === undefined && item.name === pathPart
     ) as WikiDirectory;
   }
 
-  parent!.pages = parent!.pages.filter((p) => p.path !== page.path);
+  return parent;
 }
 
-async function updateWiki(batchUpdates: boolean = false) {
+async function removePageFromDirectory(page: WikiPage) {
+  const pathParts = page.path.split("/");
+  pathParts.splice(-1, 1);
+
+  const directory = getDirectory(pathParts.join("/"));
+  directory!.pages = directory!.pages.filter((p) => p.path !== page.path);
+
+  if (directory!.pages.length === 0) {
+    if (directory!.path.includes("/")) {
+      const directoryPathParts = directory!.path.split("/");
+      directoryPathParts.splice(-1, 1);
+      const parentDirectory = getDirectory(directoryPathParts.join("/"));
+      parentDirectory!.pages = directory!.pages.filter(
+        (p) => p.path !== directory!.path
+      );
+
+      // TODO: Support multiple levels of directories
+      // TODO: Delete an empty directory from the filesystem
+    } else {
+      treeStore.tree = treeStore.tree!.filter(
+        (p) => p.path !== directory!.path
+      );
+    }
+  }
+}
+
+export async function updateWiki() {
   const pageUris = await workspace.findFiles(
     `**/*.md`,
     "**/node_modules/**",
     500
   );
 
-  const pages: WikiPage[] = pageUris.map((uri): WikiPage => createPage(uri));
+  const pages = pageUris.map((uri) => createPage(uri));
 
   const tree: WikiItem[] = [];
   for (const page of pages) {
     if (!page.path.includes("/")) {
       tree.push(page);
     } else {
-      addPageToDirectory(page, tree);
+      await addPageToDirectory(page, tree);
     }
   }
 
   store.pages = pages;
-  store.tree = tree;
+  treeStore.tree = tree;
 
   store.isLoading = false;
 
-  await Promise.all(
-    pages.map(async (page) => runInAction(() => updatePageContents(page)))
-  );
-  await Promise.all(
-    pages.map(async (page) => runInAction(() => updatePageBacklinks(page)))
-  );
+  await Promise.all(pages.map((page) => updatePageContents(page)));
+  await Promise.all(pages.map((page) => updatePageBacklinks(page)));
 }
 
 export async function initializeWiki(workspaceRoot: string) {
@@ -152,11 +181,12 @@ export async function initializeWiki(workspaceRoot: string) {
     const page = createPage(uri);
 
     await updatePageContents(page);
+    await updatePageBacklinks(page);
 
     if (page.path.includes("/")) {
-      await addPageToDirectory(page, store.tree!);
+      await addPageToDirectory(page, treeStore.tree!);
     } else {
-      store.tree!.push(page);
+      treeStore.tree!.push(page);
     }
 
     store.pages.push(page);
@@ -166,22 +196,22 @@ export async function initializeWiki(workspaceRoot: string) {
     const page = getPage(uri);
     if (!page) return;
 
-    for (let page of store.pages.filter(
+    const linkedPages = store.pages.filter(
       (page) =>
         page.backLinks &&
-        page.backLinks.find(
-          (link) => link.location.uri.toString() === uri.toString()
-        )
-    )) {
+        page.backLinks.find((link) => areEqualUris(link.location.uri, uri))
+    );
+
+    for (const page of linkedPages) {
       page.backLinks = page.backLinks!.filter(
-        (link) => link.location.uri.toString() !== uri.toString()
+        (link) => !areEqualUris(link.location.uri, uri)
       );
     }
 
     if (page.path.includes("/")) {
-      await removePageFromDirectory(page, store.tree!);
+      await removePageFromDirectory(page);
     } else {
-      store.tree = store.tree!.filter(
+      treeStore.tree = treeStore.tree!.filter(
         (item) =>
           !(item as WikiPage).uri ||
           ((item as WikiPage).uri &&
@@ -189,9 +219,7 @@ export async function initializeWiki(workspaceRoot: string) {
       );
     }
 
-    store.pages = store.pages.filter(
-      (page) => page.uri.toString() !== uri.toString()
-    );
+    store.pages = store.pages.filter((page) => !areEqualUris(page.uri, uri));
   });
 
   watcher.onDidChange(async (uri) => {

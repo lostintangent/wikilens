@@ -25,6 +25,7 @@ export class WikiBacklinksComments implements Comment {
         const page = store.pages?.find(
           (page) => page.uri.toString() === link.location.uri.toString()
         );
+
         const title = page!.title || page!.path;
         const args = [
           link.location.uri,
@@ -60,7 +61,7 @@ export class WikiBacklinksComments implements Comment {
     this.author = {
       name: "WikiLens (Backlinks)",
       iconPath: Uri.parse(
-        "https://cdn.jsdelivr.net/gh/vsls-contrib/gistpad/images/icon.png"
+        "https://cdn.jsdelivr.net/gh/lostintangent/wikilens/icon.png"
       ),
     };
   }
@@ -81,7 +82,7 @@ export function registerCommentController() {
     const page = store.pages?.find(
       (page) => page.uri.toString() === e.document.uri.toString()
     );
-    if (!page || !page.backLinks) {
+    if (!page || !page.backLinks || page.backLinks.length === 0) {
       return;
     }
 
@@ -95,7 +96,7 @@ export function registerCommentController() {
       new Range(e.document.lineCount, 0, e.document.lineCount, 0),
       [comment]
     );
-    // @ts-ignore
+
     thread.canReply = false;
     thread.collapsibleState = CommentThreadCollapsibleState.Expanded;
 

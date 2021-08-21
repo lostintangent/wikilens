@@ -25,6 +25,9 @@ export interface WikiPageBackLink {
 
 export const store = observable({
   isLoading: true,
-  tree: <WikiItem[] | null>null,
   pages: <WikiPage[]>[],
 });
+
+export const treeStore = {
+  tree: <WikiItem[]>[],
+};

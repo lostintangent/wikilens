@@ -38,6 +38,12 @@
         "title": "Open Today Page",
         "category": "WikiLens",
         "icon": "$(calendar)"
+      },
+      {
+        "command": "wikilens.refreshWiki",
+        "title": "Refresh",
+        "category": "WikiLens",
+        "icon": "$(refresh)"
       }
     ],
     "menus": {
@@ -53,18 +59,27 @@
         {
           "command": "wikilens.openTodayPage",
           "when": "wikilens:isWikiWorkspace"
+        },
+        {
+          "command": "wikilens.refreshWiki",
+          "when": "wikilens:isWikiWorkspace"
         }
       ],
       "view/title": [
         {
-          "command": "wikilens.openTodayPage",
+          "command": "wikilens.refreshWiki",
           "when": "view == wikilens.wiki",
           "group": "navigation@1"
         },
         {
-          "command": "wikilens.addWikiPage",
+          "command": "wikilens.openTodayPage",
           "when": "view == wikilens.wiki",
           "group": "navigation@2"
+        },
+        {
+          "command": "wikilens.addWikiPage",
+          "when": "view == wikilens.wiki",
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [
@@ -97,6 +112,11 @@
     "configuration": {
       "title": "WikiLens",
       "properties": {
+        "wikilens.enabled": {
+          "default": true,
+          "type": "boolean",
+          "description": "Specifies whether to enable the wiki for the current workspace."
+        },
         "wikilens.daily.directoryName": {
           "default": "Daily",
           "type": "string",

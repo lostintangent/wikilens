@@ -8,7 +8,7 @@ import {
   window,
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
-import { store, WikiDirectory, WikiItem, WikiPage } from "../store";
+import { store, treeStore, WikiDirectory, WikiItem, WikiPage } from "../store";
 import { WikiBackLinkNode, WikiDirectoryNode, WikiPageNode } from "./nodes";
 
 class WikiTreeProvider implements TreeDataProvider<TreeItem> {
@@ -41,7 +41,7 @@ class WikiTreeProvider implements TreeDataProvider<TreeItem> {
     );
   }
 
-  getFileNodes(items: WikiItem[] | null = store.tree) {
+  getFileNodes(items: WikiItem[] | null = treeStore.tree) {
     return items!
       .sort((a, b) => {
         if (

@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { registerCommands } from "./commands";
+import { config } from "./config";
 import { registerLinkCompletionProvider } from "./language/completionProvider";
 import { registerHoverProvider } from "./language/hoverProvider";
 import { registerDocumentLinkProvider } from "./language/linkProvider";
@@ -8,6 +9,25 @@ import { registerLinkDecorator } from "./links/decorator";
 import { extendMarkdownIt } from "./links/markdownPreview";
 import { initializeWiki } from "./store/actions";
 import { registerTreeProvider } from "./tree";
+
+function initialize() {
+  const workspace = vscode.workspace.workspaceFolders?.[0];
+  if (workspace && config.enabled) {
+    vscode.commands.executeCommand(
+      "setContext",
+      "wikilens:isWikiWorkspace",
+      true
+    );
+
+    initializeWiki(workspace.uri.path);
+  } else {
+    vscode.commands.executeCommand(
+      "setContext",
+      "wikilens:isWikiWorkspace",
+      false
+    );
+  }
+}
 
 export function activate(context: vscode.ExtensionContext) {
   registerCommands(context);
@@ -18,19 +38,13 @@ export function activate(context: vscode.ExtensionContext) {
   registerCommentController();
   registerTreeProvider();
 
-  const workspace = vscode.workspace.workspaceFolders?.[0];
-  if (
-    workspace //&&
-    //workspace.uri.scheme === "vscode-vfs" &&
-    //workspace.uri.authority === "github"
-  ) {
-    vscode.commands.executeCommand(
-      "setContext",
-      "wikilens:isWikiWorkspace",
-      true
-    );
-    initializeWiki(vscode.workspace.workspaceFolders![0].uri.path);
-  }
+  vscode.workspace.onDidChangeConfiguration((e) => {
+    if (e.affectsConfiguration("wikilens.enabled")) {
+      initialize();
+    }
+  });
+
+  initialize();
 
   return {
     extendMarkdownIt,

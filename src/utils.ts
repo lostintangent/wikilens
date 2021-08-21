@@ -2,6 +2,7 @@ import {
   DocumentSelector,
   ProgressLocation,
   TextDocument,
+  Uri,
   window,
 } from "vscode";
 import { config } from "./config";
@@ -19,7 +20,7 @@ export const LINK_SELECTOR: DocumentSelector = [
 
 export const LINK_PREFIX = "[[";
 export const LINK_SUFFIX = "]]";
-const LINK_PATTERN = /(?:#?\[\[)(?<page>[^\]]+)(?:\]\])|#(?<tag>[^\s]+)/gi;
+const LINK_PATTERN = /(?:#?\[\[)(?<page>[^\]`]+)(?:\]\])|#(?<tag>[^\s#`,]+)/gi;
 
 const DAILY_PATTERN = /\d{4}-\d{2}-\d{2}/;
 export function getPageFilePath(name: string) {
@@ -95,6 +96,10 @@ export function withProgress<T>(title: string, action: () => Promise<T>) {
     },
     action
   );
+}
+
+export function areEqualUris(uri: Uri, otherUri: Uri) {
+  return uri.toString().localeCompare(otherUri.toString()) === 0;
 }
 
 export function isWikiDocument(document: TextDocument) {

@@ -48,9 +48,11 @@ async function updatePageContents(page: WikiPage) {
 
 async function updatePageBacklinks(page: WikiPage) {
   const linkedPages = store.pages.filter(
-    (page) =>
-      page.backLinks &&
-      page.backLinks.some((link) => areEqualUris(link.location.uri, page.uri))
+    (linkedPage) =>
+      linkedPage.backLinks &&
+      linkedPage.backLinks.some((link) =>
+        areEqualUris(link.location.uri, page.uri)
+      )
   );
 
   const newLinks = await getBackLinks(page);
@@ -134,7 +136,7 @@ async function removePageFromDirectory(page: WikiPage) {
       );
 
       // TODO: Support multiple levels of directories
-      // TODO: Delete an empty directory from the filesystem
+      // TODO: Delete an empty directory from the filesystem??
     } else {
       treeStore.tree = treeStore.tree!.filter(
         (p) => p.path !== directory!.path

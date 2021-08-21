@@ -122,7 +122,7 @@
           "type": "string",
           "description": "Specifies the name of the directory that daily pages are organized within."
         },
-        "wikilens.wikis.daily.titleFormat": {
+        "wikilens.daily.titleFormat": {
           "default": "LL",
           "type": "string",
           "description": "Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages."

@@ -80,6 +80,7 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
   }
 }
 
+// TODO: Figure out why word characters don't trigger completion
 let triggerCharacters = [...Array(94).keys()].map((i) =>
   String.fromCharCode(i + 32)
 );

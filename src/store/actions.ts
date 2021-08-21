@@ -180,23 +180,36 @@ export async function initializeWiki(workspaceRoot: string) {
   const watcher = workspace.createFileSystemWatcher("**/**.md");
 
   watcher.onDidCreate(async (uri) => {
-    console.log("WL File Created: ", uri);
-    const page = createPage(uri);
+    if (uri.scheme === "vscode-userdata") return;
+
+    // TODO: In github.dev, file changes are advertised
+    // as creations sometimes. This is a temporary
+    // hack to work around that.
+    let page = getPage(uri);
+    let isNewPage = false;
+    if (!page) {
+      isNewPage = true;
+      page = createPage(uri);
+    }
 
     await updatePageContents(page);
     await updatePageBacklinks(page);
 
-    if (page.path.includes("/")) {
-      await addPageToDirectory(page, treeStore.tree!);
-    } else {
-      treeStore.tree!.push(page);
-    }
+    if (isNewPage) {
+      if (page.path.includes("/")) {
+        await addPageToDirectory(page, treeStore.tree!);
+      } else {
+        treeStore.tree!.push(page);
+      }
 
-    store.pages.push(page);
+      store.pages.push(page);
+    }
   });
 
   watcher.onDidDelete(async (uri) => {
-    console.log("WL File Deleted: ", uri);
+    // TODO: Scope changes to the current workspace
+    if (uri.scheme === "vscode-userdata") return;
+
     const page = getPage(uri);
     if (!page) return;
 
@@ -227,7 +240,8 @@ export async function initializeWiki(workspaceRoot: string) {
   });
 
   watcher.onDidChange(async (uri) => {
-    console.log("WL File Changed: ", uri);
+    if (uri.scheme === "vscode-userdata") return;
+
     const page = getPage(uri);
     if (!page) return;
 

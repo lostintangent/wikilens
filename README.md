@@ -2,20 +2,29 @@
 
 WikiLens is a VS Code extension that adds a Roam/Obsidian-like editing experience on top of a GitHub repo and markdown files. This provides an excellent companion to [github.dev](https://twitter.com/github/status/1425505817827151872), and allows you to manage your notes/knowledge base, directly from the browser and using your existing/customized editor setup (e.g. Vim bindings, color theme) 🚀
 
-## Features
+<img width="700px" src="https://user-images.githubusercontent.com/116461/130336954-9b4a1c89-1bdc-4c35-bce1-0f5173d8f71b.png" />
 
-1. 📄 Page-centric file explorer
+<ins>Interesting Features:</ins>
+
+1. 📄 [Page-centric file explorer](#pages-wiki-view) (`Wiki` view)
    1. Filtered to markdown files
    1. Pages are displayed by title (`# Heading`), not filename
-1. 📆 Daily pages
-1. ⬅️ Backlinks (`[[Page Name]]`)
+1. 📆 [Daily pages](#daily-pages)
+1. ⬅️ [Backlinks](#backlinks) (`[[Page Name]]`)
    1. Auto-completion for pages
    1. Hover support for links
    1. Inline backlinks view within files
    1. Tags (`#page-name`, `#[[Page Name]]`)
 1. 🖇️ [Page embeds](#embedding-pages) (`![[Page Name]]`)
 
-## Pages
+## Getting Started
+
+1. Install this extension
+1. Open up a workspace/repo that you want to edit
+1. Find the `Wiki` view in the `Explorer` tab
+1. Start creating files + backlinks!
+
+## Pages / `Wiki` view
 
 Wikis are composed of "pages", which are markdown files that are identified using their `# Heading`, not their underlying file name. As a result, when you add a new page to a wiki, you simply give it a title/heading (e.g. `Todo List`), as opposed to a file path. Behind the scenes, WikiLens will create a new markdown file and pre-populate file name and `# Heading` using the specified title. To make it really simple to add a new wiki page, you can either run the `WikiLens: Add Page` command, or click the `+` button in the `Wiki` view.
 
@@ -31,15 +40,21 @@ In order to create connections between pages, you can add `[[links]]` to a page.
 
 When a page includes `[[links]]`, they will be syntax highlighted, and you can hover over them to quickly see the context of the referenced page. Furthermore, you can `cmd+click` the link in order to directly jump to that page. If the page doesn't already exit, then `cmd+clicking` it will automatically create the page before opening it. This workflow makes it easy to author and navigate the set of pages within your wiki.
 
-## Navigating Links
+<img width="700px" src="https://user-images.githubusercontent.com/116461/130336991-2e229823-0b51-4eac-882e-a81c7d970ee3.png" />
+
+### Navigating Links
 
 When you add `[[links]]` to a page, the referenced page automatically detects the "back link", and displays it as a child node of the page in the `Wiki` tree. This allows you to navigate `[[links]]` bi-directionallly, and allows your wiki to form a "network" of information. Each back link displays a line preview of the reference, and when clicked will automatically navigate you to the page location that references the selected page.
 
 Furthermore, when you open a page that contains backlinks, the set of backlinks will be displayed at the bottom of the page, including a line preview of the backlink. This makes it possible to have pages that don't actually include content themselves, but rather, are simply "topic aggregators" to view the connections between pages in the same wiki.
 
+<img width="700px" src="https://user-images.githubusercontent.com/116461/130336971-a146f5c8-9066-409a-b350-4a59e8c6a8d0.png" />
+
 ## Embedding Pages
 
 In addition to adding links to pages, it's sometimes valuable to embed the contents of another page directly into a note, so that you can easily read them together. To do this, you can use the `![[link]]` syntax, where you'll recieve auto-completion support just like regular links. When you use an embed link, the target page's contents will be displayed within the note whenever you view it's markdown preview.
+
+<img width="700px" src="https://user-images.githubusercontent.com/116461/130336980-7c1f14d9-5e27-4fbb-b43e-2e5f997aaead.png" />
 
 ## Contributed Commands
 

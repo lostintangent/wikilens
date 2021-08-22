@@ -2,7 +2,7 @@
 
 WikiLens is a VS Code extension that adds a Roam/Obsidian-like editing experience on top of a GitHub repo and markdown files. This provides an excellent companion to [github.dev](https://twitter.com/github/status/1425505817827151872), and allows you to manage your notes/knowledge base, directly from the browser and using your existing/customized editor setup (e.g. Vim bindings, color theme) 🚀
 
-<img width="700px" src="https://user-images.githubusercontent.com/116461/130336954-9b4a1c89-1bdc-4c35-bce1-0f5173d8f71b.png" />
+<img width="700px" src="https://user-images.githubusercontent.com/116461/130362693-a8bad6e7-6f50-4c60-883f-6d0f33b74d26.gif" />
 
 <ins>Interesting Features:</ins>
 
@@ -27,6 +27,8 @@ WikiLens is a VS Code extension that adds a Roam/Obsidian-like editing experienc
 ## Pages / `Wiki` view
 
 Wikis are composed of "pages", which are markdown files that are identified using their `# Heading`, not their underlying file name. As a result, when you add a new page to a wiki, you simply give it a title/heading (e.g. `Todo List`), as opposed to a file path. Behind the scenes, WikiLens will create a new markdown file and pre-populate file name and `# Heading` using the specified title. To make it really simple to add a new wiki page, you can either run the `WikiLens: Add Page` command, or click the `+` button in the `Wiki` view.
+
+<img width="700px" src="https://user-images.githubusercontent.com/116461/130336954-9b4a1c89-1bdc-4c35-bce1-0f5173d8f71b.png" />
 
 ## Daily Pages
 

@@ -1,6 +1,8 @@
+import * as minimatch from "minimatch";
 import { observable, runInAction } from "mobx";
 import { Location, Range, Uri, workspace } from "vscode";
 import { store, treeStore, WikiDirectory, WikiItem, WikiPage } from ".";
+import { config } from "../config";
 import {
   areEqualUris,
   byteArrayToString,
@@ -145,12 +147,16 @@ async function removePageFromDirectory(page: WikiPage) {
   }
 }
 
+function getIgnoredFiles() {
+  return `{${config.ignoredFiles.join(",")}}`;
+}
+
 export async function updateWiki() {
-  const pageUris = await workspace.findFiles(
-    `**/*.md`,
-    "**/node_modules/**",
-    500
-  );
+  // TODO: Figure out how to find non-committed
+  // files in github.dev
+
+  const ignoredFiles = getIgnoredFiles();
+  const pageUris = await workspace.findFiles(`**/*.md`, ignoredFiles, 500);
 
   const pages = pageUris.map((uri) => createPage(uri));
 
@@ -177,14 +183,15 @@ export async function initializeWiki(workspaceRoot: string) {
 
   updateWiki();
 
-  const watcher = workspace.createFileSystemWatcher("**/**.md");
+  const watcher = workspace.createFileSystemWatcher(`**/**.md`);
 
   watcher.onDidCreate(async (uri) => {
-    if (uri.scheme === "vscode-userdata") return;
+    if (
+      uri.scheme === "vscode-userdata" ||
+      minimatch(uri.path, getIgnoredFiles())
+    )
+      return;
 
-    // TODO: In github.dev, file changes are advertised
-    // as creations sometimes. This is a temporary
-    // hack to work around that.
     let page = getPage(uri);
     let isNewPage = false;
     if (!page) {

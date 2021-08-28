@@ -17,4 +17,11 @@ export const config = {
   get enabled() {
     return getConfigSetting("enabled", true);
   },
+  get ignoredFiles() {
+    return getConfigSetting("ignoredFiles", [
+      "**/node_modules/**",
+      "**/.vscode/**",
+      "**/.github/**",
+    ]);
+  },
 };

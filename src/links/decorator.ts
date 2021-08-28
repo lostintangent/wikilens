@@ -21,14 +21,14 @@ const decorationTypes: { [type: string]: TextEditorDecorationType } = {
   }),
 };
 
-const decors: { [decorTypeName: string]: Range[] } = {};
-
-const regexToDecorationTypes: { [regexp: string]: string[] } = {
-  ["(\\[\\[)([^\\[\\]]+?)(\\]\\])"]: ["gray", "lightBlue", "gray"],
-  ["(#)([^\\s#`,]+)"]: ["gray", "lightBlue"],
+const regexToDecorationTypes: { [regexp: string]: (string | null)[] } = {
+  ["(?:\\s|^)(\\[\\[)([^\\[\\]]+?)(\\]\\])"]: ["gray", "lightBlue", "gray"],
+  ["(\\s|^)(#)([^\\s#`,]+)"]: [null, "gray", "lightBlue"],
 };
 
 function getDecorations(document: TextDocument) {
+  const decors: { [decorTypeName: string]: Range[] } = {};
+
   Object.keys(decorationTypes).forEach((decorTypeName) => {
     decors[decorTypeName] = [];
   });
@@ -37,50 +37,31 @@ function getDecorations(document: TextDocument) {
     .getText()
     .split(/\r?\n/g)
     .forEach((lineText, lineNum) => {
-      // Trick. Match `[alt](link)` and `![alt](link)` first and remember those greyed out ranges
-      const noDecorRanges: [number, number][] = [];
-
       Object.keys(regexToDecorationTypes).forEach((reText) => {
-        const decorTypeNames: string[] = regexToDecorationTypes[reText];
+        const decorTypeNames = regexToDecorationTypes[reText];
         const regex = new RegExp(reText, "g");
 
         let match: RegExpExecArray | null;
         while ((match = regex.exec(lineText)) !== null) {
           let startIndex = match.index;
 
-          if (
-            noDecorRanges.some(
-              (r) =>
-                (startIndex > r[0] && startIndex < r[1]) ||
-                (match &&
-                  startIndex + match[0].length > r[0] &&
-                  startIndex + match[0].length < r[1])
-            )
-          ) {
-            continue;
-          }
-
           for (let i = 0; i < decorTypeNames.length; i++) {
             const decorTypeName = decorTypeNames[i];
-            const caughtGroup =
-              decorTypeName === "codeSpan" ? match[0] : match[i + 1];
+            const matchGroup = match[i + 1];
 
-            if (decorTypeName === "gray" && caughtGroup.length > 2) {
-              noDecorRanges.push([startIndex, startIndex + caughtGroup.length]);
+            if (!decorTypeName) {
+              startIndex += matchGroup.length;
+              continue;
             }
 
             const range = new Range(
               lineNum,
               startIndex,
               lineNum,
-              startIndex + caughtGroup.length
+              startIndex + matchGroup.length
             );
-            startIndex += caughtGroup.length;
 
-            //// Needed for `[alt](link)` rule. And must appear after `startIndex += caughtGroup.length;`
-            if (decorTypeName.length === 0) {
-              continue;
-            }
+            startIndex += matchGroup.length;
             decors[decorTypeName].push(range);
           }
         }

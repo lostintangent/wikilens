@@ -20,7 +20,8 @@ export const LINK_SELECTOR: DocumentSelector = [
 
 export const LINK_PREFIX = "[[";
 export const LINK_SUFFIX = "]]";
-const LINK_PATTERN = /(?:#?\[\[)(?<page>[^\]`]+)(?:\]\])|#(?<tag>[^\s#`,]+)/gi;
+const LINK_PATTERN =
+  /(?:\s|^)((?:#?\[\[)(?<page>[^\]`]+)(?:\]\])|#(?<tag>[^\s#`,]+))/gim;
 
 const DAILY_PATTERN = /\d{4}-\d{2}-\d{2}/;
 export function getPageFilePath(name: string) {

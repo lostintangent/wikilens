@@ -88,7 +88,7 @@ export function registerCommentController() {
 
     controller = comments.createCommentController(
       "wikilens.backlinks",
-      "Backlinks"
+      "WikiLens"
     );
     const comment = new WikiBacklinksComments(page.backLinks);
     const thread = controller.createCommentThread(
@@ -97,6 +97,7 @@ export function registerCommentController() {
       [comment]
     );
 
+    thread.label = "WikiLens";
     thread.canReply = false;
     thread.collapsibleState = CommentThreadCollapsibleState.Expanded;
 

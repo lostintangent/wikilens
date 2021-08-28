@@ -63,7 +63,11 @@ export class WikiBackLinkNode extends TreeItem {
       new ThemeColor("charts.purple")
     );
     this.description = backLink.linePreview;
-    this.tooltip = new MarkdownString(backLink.linePreview);
+    this.tooltip = new MarkdownString(`**Page**: ${getbackLinkDisplayName(
+      backLink.location.uri
+    )}
+
+**Preview**: ${backLink.linePreview}`);
 
     this.command = {
       command: "vscode.open",

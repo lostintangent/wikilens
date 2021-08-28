@@ -2,8 +2,8 @@
   "name": "wikilens",
   "displayName": "WikiLens",
   "publisher": "lostintangent",
-  "description": "Provides a page-centric wiki editing experience for GitHub repos",
-  "version": "0.0.4",
+  "description": "Provides a wiki-like markdown editor for taking notes and building knowledge bases.",
+  "version": "0.0.5",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.59.0"
@@ -137,7 +137,7 @@
         "wikilens.daily.titleFormat": {
           "default": "LL",
           "type": "string",
-          "description": "Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages."
+          "markdownDescription": "Specifies the date format (using Moment/Day.js syntax) that is used for the title of daily pages.\n\n**Examples:** `dd/mm/yyyy`, `mm/dd/yyyy`, `yyyy/mm/dd`, `L`, `LL` ([details](https://momentjs.com/docs/#/displaying/format/))."
         }
       }
     },

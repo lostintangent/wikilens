@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.0.5 (08/28/21)
+
+- Fixed the link styling for tagged links (`#[[foo]]`) and embeds
+- Added samples to the description of the `WikiLens: Daily > Title Format` setting
+
 ## v0.0.4 (08/28/21)
 
 - Introduced the `WikiLens: Ignored Files` setting

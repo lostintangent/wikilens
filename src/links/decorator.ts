@@ -22,7 +22,14 @@ const decorationTypes: { [type: string]: TextEditorDecorationType } = {
 };
 
 const regexToDecorationTypes: { [regexp: string]: (string | null)[] } = {
-  ["(?:\\s|^)(\\[\\[)([^\\[\\]]+?)(\\]\\])"]: ["gray", "lightBlue", "gray"],
+  ["(\\s|^)(\\[\\[)([^\\[\\]]+?)(\\]\\])"]: [null, "gray", "lightBlue", "gray"],
+  ["(\\s|^)([\\!\\#])(\\[\\[)([^\\[\\]]+?)(\\]\\])"]: [
+    null,
+    "gray",
+    "gray",
+    "lightBlue",
+    "gray",
+  ],
   ["(\\s|^)(#)([^\\s#`,]+)"]: [null, "gray", "lightBlue"],
 };
 

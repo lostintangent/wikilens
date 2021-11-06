@@ -28,14 +28,6 @@
 				"reveal": "never"
 			},
 			"group": "build"
-		},
-		{
-			"type": "npm",
-			"script": "compile",
-			"group": "build",
-			"problemMatcher": [],
-			"label": "npm: compile",
-			"detail": "webpack"
 		}
 	]
 }

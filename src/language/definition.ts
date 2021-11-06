@@ -1,4 +1,3 @@
-import { EXTENSION_NAME } from "src/constants";
 import {
     CancellationToken, commands, DefinitionProvider,
     languages,
@@ -6,6 +5,7 @@ import {
     Position, Range,
     TextDocument
 } from "vscode";
+import { EXTENSION_NAME } from "../constants";
 import { getPageFromLink, LINK_PATTERN, LINK_SELECTOR, withProgress } from "../utils";
 
 function findLink(doc: TextDocument, pos: Position) {

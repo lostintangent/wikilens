@@ -3,7 +3,7 @@
   "displayName": "WikiLens",
   "publisher": "lostintangent",
   "description": "Provides a wiki-like markdown editor for taking notes and building knowledge bases.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "icon": "icon.png",
   "engines": {
     "vscode": "^1.59.0"

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { registerCommands } from "./commands";
 import { config } from "./config";
 import { registerLinkCompletionProvider } from "./language/completionProvider";
+import { registerDefinitionProvider } from "./language/definition";
 import { registerHoverProvider } from "./language/hoverProvider";
 import { registerDocumentLinkProvider } from "./language/linkProvider";
 import { registerCommentController } from "./links/comments";
@@ -35,6 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
   registerHoverProvider();
   registerLinkCompletionProvider();
   registerDocumentLinkProvider();
+  registerDefinitionProvider();
   registerCommentController();
   registerTreeProvider();
 

@@ -3,7 +3,7 @@ import {
   ProgressLocation,
   TextDocument,
   Uri,
-  window,
+  window
 } from "vscode";
 import { config } from "./config";
 import { store, WikiPage } from "./store";
@@ -20,7 +20,7 @@ export const LINK_SELECTOR: DocumentSelector = [
 
 export const LINK_PREFIX = "[[";
 export const LINK_SUFFIX = "]]";
-const LINK_PATTERN =
+export const LINK_PATTERN =
   /(?:\s|^)((?:[#\!]?\[\[)(?<page>[^\]`]+)(?:\]\])|#(?<tag>[^\s#`,]+))/gim;
 
 const DAILY_PATTERN = /\d{4}-\d{2}-\d{2}/;

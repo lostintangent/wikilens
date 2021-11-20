@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.6 (11/05/21)
+
+- `Go to definition` command can be used to follow/create links
+
 ## v0.0.5 (08/28/21)
 
 - Fixed the link styling for tagged links (`#[[foo]]`) and embeds

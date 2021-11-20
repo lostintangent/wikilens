@@ -40,7 +40,7 @@ In addition to being able to create topic-oriented pages, WikiLens allows you to
 
 In order to create connections between pages, you can add `[[links]]` to a page. When you type `[[`, WikiLens will display a completion list of the name of all existing pages. Furthermore, you can type a new topic/page title, and WikiLens will automatically create that page for you.
 
-When a page includes `[[links]]`, they will be syntax highlighted, and you can hover over them to quickly see the context of the referenced page. Furthermore, you can `cmd+click` the link in order to directly jump to that page. If the page doesn't already exit, then `cmd+clicking` it will automatically create the page before opening it. This workflow makes it easy to author and navigate the set of pages within your wiki.
+When a page includes `[[links]]`, they will be syntax highlighted, and you can hover over them to quickly see the context of the referenced page. Furthermore, you can open the linked file with `cmd+click` or the `Go to defintion` command. If the page doesn't already exit, then following the link will automatically create the page before opening it. This workflow makes it easy to author and navigate the set of pages within your wiki.
 
 <img width="700px" src="https://user-images.githubusercontent.com/116461/130336991-2e229823-0b51-4eac-882e-a81c7d970ee3.png" />
 

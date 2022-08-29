@@ -9,7 +9,7 @@ import { config } from "./config";
 import { store, WikiPage } from "./store";
 
 export function sanitizeName(name: string) {
-  return name.replace(/\s/g, "-").replace(/[^\w\d-_]/g, "");
+  return name.replace(/\s/g, "-").replace(/[^\p{Letter}\d_-]/gu, "");
 }
 
 export const LINK_SELECTOR: DocumentSelector = [

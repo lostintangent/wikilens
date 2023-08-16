@@ -70,10 +70,6 @@ export class WikiBacklinksComments implements Comment {
 let controller: CommentController | undefined;
 export function registerCommentController() {
   window.onDidChangeActiveTextEditor((e) => {
-    if (controller) {
-      controller.dispose();
-      controller = undefined;
-    }
 
     if (!e || !isWikiDocument(e.document)) {
       return;
@@ -84,6 +80,11 @@ export function registerCommentController() {
     );
     if (!page || !page.backLinks || page.backLinks.length === 0) {
       return;
+    }
+
+    if (controller) {
+      controller.dispose();
+      controller = undefined;
     }
 
     controller = comments.createCommentController(
